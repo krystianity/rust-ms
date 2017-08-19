@@ -1,0 +1,12 @@
+[package]
+name = "rust-ms"
+version = "0.1.0"
+authors = ["Christian Froehlingsdorf <chris@5cf.de>"]
+
+[dependencies]
+iron = "0.5.1"
+time = "0.1.38"
+bodyparser = "0.7.0"
+router = "0.5.1"
+persistent = "0.3.0"
+serde_json = "1.0.2"
