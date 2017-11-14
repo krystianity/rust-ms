@@ -1,112 +1,22 @@
-extern crate iron;
-extern crate time;
-extern crate router;
-extern crate bodyparser;
-extern crate persistent;
-
 #[macro_use]
 extern crate serde_json;
 
-use iron::prelude::*;
-use iron::{BeforeMiddleware, AfterMiddleware, typemap};
-use iron::status;
-use iron::headers::ContentType;
-use time::precise_time_ns;
-use router::Router;
-use persistent::Read;
+mod msbase;
+mod mshttp;
 
-const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
-struct ResponseTime;
-struct ChainJSONParser;
-
-impl typemap::Key for ResponseTime { type Value = u64; }
-impl typemap::Key for ChainJSONParser { type Value = serde_json::value::Value; }
-
-impl BeforeMiddleware for ResponseTime {
-    fn before(&self, req: &mut Request) -> IronResult<()> {
-        req.extensions.insert::<ResponseTime>(precise_time_ns());
-        Ok(())
-    }
-}
-
-impl AfterMiddleware for ResponseTime {
-    fn after(&self, req: &mut Request, res: Response) -> IronResult<Response> {
-        let delta = precise_time_ns() - *req.extensions.get::<ResponseTime>().unwrap();
-        println!("Request took: {} ms", (delta as f64) / 1000000.0);
-        Ok(res)
-    }
-}
-
-impl BeforeMiddleware for ChainJSONParser {
-    fn before(&self, req: &mut Request) -> IronResult<()> {
-        let body = req.get::<bodyparser::Json>(); // returns Result<Option>
-        match body {
-            Ok(Some(json_body)) => {req.extensions.insert::<ChainJSONParser>(json_body); ()},
-            Ok(None) => println!("empty body"),
-            Err(err) => println!("error parsing body: {:?}", err)
-        }
-        Ok(())
-    }
-}
-
-fn hello_world(_: &mut Request) -> IronResult<Response> {
-    Ok(Response::with((iron::status::Ok, "Hello World")))
-}
-
-fn query_handler(req: &mut Request) -> IronResult<Response> {
-    let ref query = req.extensions.get::<Router>().unwrap().find("query").unwrap_or("/");
-    Ok(Response::with((status::Ok, *query)))
-}
-
-fn body_handler(req: &mut Request) -> IronResult<Response> {
-    let json_body = req.extensions.get::<ChainJSONParser>();
-    match json_body {
-        Some(ref value) => println!("Parsed body:\n{:?}", *value),
-        None => ()
-    }
-    Ok(Response::with((ContentType::json().0, status::Ok, json_result().to_string())))
-}
-
-fn json_result() ->  serde_json::value::Value {
-
-    let json_value = json!({
-      "name": "John Doe",
-      "age": 43,
-      "phones": [
-        "+44 1234567",
-        "+44 2345678"
-      ]
-    });
-
-    json_value
-}
+use msbase::msbase::config as config;
 
 /*
+    rust for Node.js developers:
     Result<val,err> -> Ok(), Err() => Javascript Callback
     Option<val> -> Some(), None, unwrap, unwrap_or => Java Optional
+    dont end with ; for returns, that kills Options
+    a module is imported via "mod name"
+    if a module uses crates they have to be accessed via use self::crate
 */
 
 fn main() {
-
-    let mut router = Router::new();
-
-    let mut hello_chain = Chain::new(hello_world);
-    hello_chain.link_before(ResponseTime);
-    hello_chain.link_after(ResponseTime);
-
-    router.get("/hello", hello_chain, "hello");
-
-    let mut query_chain = Chain::new(query_handler);
-    query_chain.link_before(ResponseTime);
-    query_chain.link_after(ResponseTime);
-
-    router.get("/:query", query_chain, "query");
-
-    let mut body_chain = Chain::new(body_handler);
-    body_chain.link_before(Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
-    body_chain.link_before(ChainJSONParser);
-
-    router.post("/", body_chain, "body");
-
-    Iron::new(router).http("localhost:3000").unwrap();
+    let conf = config::get_config(None).unwrap();
+    let constr: &str = &format!("localhost:{}", conf.get("port").unwrap());
+    mshttp::mshttp::run(constr);
 }
