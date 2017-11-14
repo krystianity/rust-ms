@@ -104,7 +104,7 @@ pub mod mshttp {
 
         router.post("/", body_chain, "body");
         
-        println!("running @ http:://{}/.", constr);
+        println!("running @ http:://{}", constr);
         Iron::new(router).http(constr).unwrap();
     }
 }
