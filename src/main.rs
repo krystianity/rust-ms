@@ -1,5 +1,8 @@
+#[macro_use] 
+extern crate log;
 #[macro_use]
 extern crate serde_json;
+extern crate env_logger;
 
 use std::io;
 
@@ -18,12 +21,14 @@ use cache_mod::cache::redis::Commands; //import traits for con.get and con.set
     - Result<val,err> -> Ok(), Err() => Javascript Callback
     - Option<val> -> Some(), None, unwrap, unwrap_or => Java Optional
     - dont end with ; for returns, that kills Options
+    - macros need to be placed in the main rs file once
     - a module is imported via "mod name"
     - the order of use:: and mod doesnt care
     - if a module uses crates they have to be accessed via use self::crate
     - try! unwraps a Result<> but returns early, so that the fn has to return a Result<> as well
     - traits === interfaces
     - struct + impl === class
+    - second let definition overwrites first without error or warning
 */
 
 fn main() {
@@ -34,6 +39,9 @@ fn main() {
 }
 
 fn execute() -> Result<(), io::Error> {
+
+    /* ## Logger ## */
+    let _ = env_logger::init();
 
     /* ## Loading JSON Configuration ## */
 
@@ -56,7 +64,11 @@ fn execute() -> Result<(), io::Error> {
         Err(error) => return Err(cache::error_to_io(error))
     };
 
-    println!("Key val is: {}.", val);
+    info!("Key val is: {}.", val);
+
+    /* ## MySQL + ORM ## */
+
+    //TODO
 
     /* ## HTTP Server ## */
     

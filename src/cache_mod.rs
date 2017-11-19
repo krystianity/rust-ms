@@ -15,6 +15,7 @@ pub mod cache {
             let constr: &str = &format!("redis://{}:{}/", host, port);
             let client = redis::Client::open(constr)?;
             let con = client.get_connection()?;
+            info!("Redis client connected to {}.", constr);
             Ok(Cache {/*client,*/ con})
         }
 

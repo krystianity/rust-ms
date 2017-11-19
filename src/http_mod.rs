@@ -105,7 +105,7 @@ pub mod mshttp {
         router.post("/", body_chain, "body");
         
         let constr: &str = &format!("{}:{}", host, port);
-        println!("running @ http:://{}", constr);
+        info!("Running webserver @ http://{}.", constr);
         Iron::new(router).http(constr).unwrap();
     }
 }

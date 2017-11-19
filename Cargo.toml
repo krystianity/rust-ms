@@ -1,9 +1,12 @@
 [package]
 name = "rust-ms"
-version = "0.1.0"
+version = "0.3.0"
 authors = ["Christian Froehlingsdorf <chris@5cf.de>"]
 
 [dependencies]
+env_logger = "0.4.3"
+log = "0.3.8"
+dotenv = "0.10.1"
 iron = "0.5.1"
 time = "0.1.38"
 bodyparser = "0.7.0"
@@ -11,5 +14,4 @@ router = "0.5.1"
 persistent = "0.3.0"
 serde_json = "1.0.2"
 diesel = { version = "0.16.0", features = ["mysql"] }
-dotenv = "0.9.0"
 redis = "0.8.0"
