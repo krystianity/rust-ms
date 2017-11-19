@@ -11,11 +11,14 @@ mod base_mod;
 mod httpserver_mod;
 mod cache_mod;
 mod httpclient_mod;
+mod kafka;
 
 use base_mod::msbase::config as config;
 use httpserver_mod::mshttp_s as http_s;
 use httpclient_mod::mshttp_c as http_c;
 use cache_mod::cache as cache;
+//use kafka::consumer_mod::consumer as consumer;
+use kafka::producer_mod::producer as producer;
 
 use cache_mod::cache::redis;
 use cache_mod::cache::redis::Commands; //import traits for con.get and con.set
@@ -79,7 +82,12 @@ fn execute() -> Result<(), io::Error> {
 
     /* ## Kafka Consumer/Producer ## */
 
-    //TODO
+    let brokers = conf["kafka"]["brokers"].as_str().expect("kafka brokers missing in config.");
+
+    let kafka_producer = producer::Producer::new(brokers)?;
+    let _ = kafka_producer.produce("rusttopic", "rustkey1", "rustvalue1", 0);
+    let _ = kafka_producer.produce("rusttopic", "rustkey2", "rustvalue2", 0);
+    let _ = kafka_producer.produce("rusttopic", "rustkey3", "rustvalue3", 0);
 
     /* ## HTTP Server ## */
     

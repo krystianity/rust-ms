@@ -16,3 +16,5 @@ serde_json = "1.0.2"
 diesel = { version = "0.16.0", features = ["mysql"] }
 redis = "0.8.0"
 reqwest = "0.8.1"
+futures = "0.1.17"
+rdkafka = "^0.13.0"
