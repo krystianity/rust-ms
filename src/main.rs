@@ -65,13 +65,13 @@ fn execute() -> Result<(), io::Error> {
 
     let _ = redis.set(redis_key, "peter"); //set fn is wrapped
 
-    let key_result: Result<String, redis::RedisError> = redis.con.get(redis_key);
+    let key_result: Result<String, redis::RedisError> = redis.con.get(redis_key); //get fn is not wrapped
     match key_result {
         Ok(result) => info!("Key val is: {}.", result),
         Err(error) => return Err(cache::error_to_io(error))
     }
 
-    let _ = redis.del(redis_key);
+    let _ = redis.del(redis_key); //del fn is wrapped
 
     /* ## MySQL + ORM ## */
 
