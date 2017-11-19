@@ -8,6 +8,8 @@
         "port": 6379
     },
     "kafka": {
-        "brokers": "localhost:9092"
+        "brokers": "localhost:9092",
+        "group_id": "rust-ms-group",
+        "topic": "rusttopic"
     }
 }

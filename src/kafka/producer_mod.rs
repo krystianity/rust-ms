@@ -12,13 +12,13 @@ pub mod producer {
     use self::rdkafka::error::KafkaError;
     use self::rdkafka::message::OwnedMessage;
 
-    pub struct Producer {
+    pub struct MSProducer {
         client: FutureProducer<EmptyContext>
     }
 
-    impl Producer {
+    impl MSProducer {
         
-        pub fn new(brokers: &str) -> Result<Producer, io::Error>{
+        pub fn new(brokers: &str) -> Result<MSProducer, io::Error>{
 
             let client = ClientConfig::new()
                 .set("bootstrap.servers", brokers)
@@ -28,7 +28,7 @@ pub mod producer {
                 .expect("Producer creation error");
 
             info!("New Kafka Producer created.");
-            Ok(Producer{client})
+            Ok(MSProducer{client})
         }
 
         pub fn produce(&self, topic_name: &str, key: &str, value: &str, partition: i64) -> Result<(i32, i64), (KafkaError, OwnedMessage)> {

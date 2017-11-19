@@ -17,7 +17,7 @@ use base_mod::msbase::config as config;
 use httpserver_mod::mshttp_s as http_s;
 use httpclient_mod::mshttp_c as http_c;
 use cache_mod::cache as cache;
-//use kafka::consumer_mod::consumer as consumer;
+use kafka::consumer_mod::consumer as consumer;
 use kafka::producer_mod::producer as producer;
 
 use cache_mod::cache::redis;
@@ -82,12 +82,19 @@ fn execute() -> Result<(), io::Error> {
 
     /* ## Kafka Consumer/Producer ## */
 
-    let brokers = conf["kafka"]["brokers"].as_str().expect("kafka brokers missing in config.");
+    kafka::kafka::log_version_info();
 
-    let kafka_producer = producer::Producer::new(brokers)?;
-    let _ = kafka_producer.produce("rusttopic", "rustkey1", "rustvalue1", 0);
-    let _ = kafka_producer.produce("rusttopic", "rustkey2", "rustvalue2", 0);
-    let _ = kafka_producer.produce("rusttopic", "rustkey3", "rustvalue3", 0);
+    let brokers = conf["kafka"]["brokers"].as_str().expect("kafka brokers missing in config.");
+    let group_id = conf["kafka"]["group_id"].as_str().expect("kafka group_id missing in config.");
+    let kafka_topic = conf["kafka"]["topic"].as_str().expect("kafka topic missing in config.");
+
+    let kafka_consumer = consumer::MSConsumer::new(brokers, group_id)?;
+    let _ = kafka_consumer.consume(&[kafka_topic]);
+
+    let kafka_producer = producer::MSProducer::new(brokers)?;
+    let _ = kafka_producer.produce(kafka_topic, "rustkey1", "rustvalue1", 0);
+    let _ = kafka_producer.produce(kafka_topic, "rustkey2", "rustvalue2", 0);
+    let _ = kafka_producer.produce(kafka_topic, "rustkey3", "rustvalue3", 0);
 
     /* ## HTTP Server ## */
     

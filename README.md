@@ -10,7 +10,7 @@
 * Redis Client
 * HTTP Client `using reqwest/hyper`
 * ORM (MySQL) Client `using diesel`
-* Kafka Producer/Consumer
+* Kafka Producer/Consumer `using rdkafka`
 
 ## Setup Instructions
 
