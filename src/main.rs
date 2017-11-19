@@ -22,7 +22,7 @@ use cache_mod::cache::redis::Commands; //import traits for con.get and con.set
     rust for Node.js developers:
     - Result<val,err> -> Ok(), Err() => Javascript Callback
     - Option<val> -> Some(), None, unwrap, unwrap_or => Java Optional
-    - dont end with ; for returns, that kills Options
+    - dont end with ; for returns, as this will cause the fn to return ()
     - macros need to be placed in the main rs file once
     - a module is imported via "mod name"
     - the order of use:: and mod doesnt care
@@ -43,7 +43,8 @@ fn main() {
 fn execute() -> Result<(), io::Error> {
 
     /* ## Logger ## */
-    let _ = env_logger::init();
+
+    env_logger::init().expect("Failed to setup logger.");
 
     /* ## Loading JSON Configuration ## */
 
@@ -77,7 +78,13 @@ fn execute() -> Result<(), io::Error> {
 
     /* ## HTTP Client ## */
 
-    http_c::run();
+    let client = http_c::HttpClient::new()?;
+
+    let mut res = client.get("http://httpbin.org/get").unwrap();
+    info!("GET: {}, {}", res.status(), res.text().unwrap());
+
+    let mut res = client.post("http://httpbin.org/post", String::from("{}")).unwrap();
+    info!("POST: {}, {}", res.status(), res.text().unwrap());
 
     /* ## HTTP Server ## */
     
