@@ -81,7 +81,7 @@ pub mod mshttp {
         json_value
     }
 
-    pub fn run(constr: &str){
+    pub fn run(host: &str, port: i64){
 
         let mut router = Router::new();
 
@@ -104,6 +104,7 @@ pub mod mshttp {
 
         router.post("/", body_chain, "body");
         
+        let constr: &str = &format!("{}:{}", host, port);
         println!("running @ http:://{}", constr);
         Iron::new(router).http(constr).unwrap();
     }

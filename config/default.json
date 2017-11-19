@@ -1,3 +1,10 @@
 {
-    "port": 22445
+    "http": {
+        "host": "localhost",
+        "port": 22445
+    },
+    "redis": {
+        "host": "127.0.0.1",
+        "port": 6379
+    }
 }
