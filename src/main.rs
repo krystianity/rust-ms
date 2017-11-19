@@ -5,6 +5,7 @@ extern crate serde_json;
 extern crate env_logger;
 
 use std::io;
+use std::thread;
 
 mod base_mod;
 mod httpserver_mod;
@@ -76,21 +77,31 @@ fn execute() -> Result<(), io::Error> {
 
     //TODO
 
-    /* ## HTTP Client ## */
-
-    let client = http_c::HttpClient::new()?;
-
-    let mut res = client.get("http://httpbin.org/get").unwrap();
-    info!("GET: {}, {}", res.status(), res.text().unwrap());
-
-    let mut res = client.post("http://httpbin.org/post", String::from("{}")).unwrap();
-    info!("POST: {}, {}", res.status(), res.text().unwrap());
-
     /* ## HTTP Server ## */
     
+    let webserver_thread = thread::spawn(move || {
+        //TODO move this stuff out of closure, static access?
+        let conf = config::get_config(None).expect("Failed to load JSON config.");
+        let http_host = conf["http"]["host"].as_str().expect("http host missing in config.");
+        let http_port = conf["http"]["port"].as_i64().expect("http port missing in config.");
+        http_s::run(http_host, http_port);
+    });
+
+    /* ## HTTP Client ## */
+
     let http_host = conf["http"]["host"].as_str().expect("http host missing in config.");
     let http_port = conf["http"]["port"].as_i64().expect("http port missing in config.");
-    http_s::run(http_host, http_port);
+    let client = http_c::HttpClient::new()?;
 
+    let http_url = &format!("http://{}:{}/", http_host, http_port);
+    let mut res = client.get(http_url).unwrap();
+    info!("GET: {}, {}", res.status(), res.text().unwrap());
+
+    let mut res = client.post(http_url, String::from("{\"hi\":\"bye\"}")).unwrap();
+    info!("POST: {}, {}", res.status(), res.text().unwrap());
+
+    /* ## Clean-up ## */
+
+    let _ = webserver_thread.join(); //awaits http server endlessly
     Ok(())
 }
