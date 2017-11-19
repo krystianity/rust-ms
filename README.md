@@ -6,10 +6,11 @@
 
 * Logger
 * JSON Config Loader
-* HTTP Server
+* HTTP Server `using iron/hyper`
 * Redis Client
-* HTTP Client
-* ORM (MySQL) Client
+* HTTP Client `using reqwest/hyper`
+* ORM (MySQL) Client `using diesel`
+* Kafka Producer/Consumer
 
 ## Setup Instructions
 

@@ -7,11 +7,13 @@ extern crate env_logger;
 use std::io;
 
 mod base_mod;
-mod http_mod;
+mod httpserver_mod;
 mod cache_mod;
+mod httpclient_mod;
 
 use base_mod::msbase::config as config;
-use http_mod::mshttp as http;
+use httpserver_mod::mshttp_s as http_s;
+use httpclient_mod::mshttp_c as http_c;
 use cache_mod::cache as cache;
 
 use cache_mod::cache::redis::Commands; //import traits for con.get and con.set
@@ -51,7 +53,6 @@ fn execute() -> Result<(), io::Error> {
 
     let redis_host = conf["redis"]["host"].as_str().expect("redis host missing in config.");
     let redis_port = conf["redis"]["port"].as_i64().expect("redis port missing in config.");
-
     let redis = match cache::Cache::new(redis_host, redis_port) {
         Ok(result) => result,
         Err(error) => return Err(cache::error_to_io(error))
@@ -70,11 +71,19 @@ fn execute() -> Result<(), io::Error> {
 
     //TODO
 
+    /* ## Kafka Consumer/Producer ## */
+
+    //TODO
+
+    /* ## HTTP Client ## */
+
+    http_c::run();
+
     /* ## HTTP Server ## */
     
     let http_host = conf["http"]["host"].as_str().expect("http host missing in config.");
     let http_port = conf["http"]["port"].as_i64().expect("http port missing in config.");
-    http::run(http_host, http_port);
+    http_s::run(http_host, http_port);
 
     Ok(())
 }

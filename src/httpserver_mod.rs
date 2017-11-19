@@ -1,4 +1,4 @@
-pub mod mshttp {
+pub mod mshttp_s {
 
     extern crate iron;
     extern crate time;
