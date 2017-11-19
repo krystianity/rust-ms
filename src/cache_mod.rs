@@ -23,6 +23,11 @@ pub mod cache {
             let _ : () = self.con.set(key, val)?;
             Ok(())
         }
+
+        pub fn del(&self, key: &str) -> Result<(), redis::RedisError> { 
+            let _ : () = self.con.del(key)?;
+            Ok(())
+        }
     }
 
     pub fn error_to_io(error: redis::RedisError) -> Error {

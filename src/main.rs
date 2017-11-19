@@ -17,6 +17,7 @@ use httpserver_mod::mshttp_s as http_s;
 use httpclient_mod::mshttp_c as http_c;
 use cache_mod::cache as cache;
 
+use cache_mod::cache::redis;
 use cache_mod::cache::redis::Commands; //import traits for con.get and con.set
 
 /*
@@ -60,14 +61,17 @@ fn execute() -> Result<(), io::Error> {
         Err(error) => return Err(cache::error_to_io(error))
     };
 
-    let _ = redis.set("hans", "peter"); //set fn is wrapped
+    let redis_key = "hans";
 
-    let val: String = match redis.con.get("hans") {
-        Ok(result) => result,
+    let _ = redis.set(redis_key, "peter"); //set fn is wrapped
+
+    let key_result: Result<String, redis::RedisError> = redis.con.get(redis_key);
+    match key_result {
+        Ok(result) => info!("Key val is: {}.", result),
         Err(error) => return Err(cache::error_to_io(error))
-    };
+    }
 
-    info!("Key val is: {}.", val);
+    let _ = redis.del(redis_key);
 
     /* ## MySQL + ORM ## */
 
