@@ -84,12 +84,18 @@ fn execute() -> Result<(), io::Error> {
 
     kafka::kafka::log_version_info();
 
-    let brokers = conf["kafka"]["brokers"].as_str().expect("kafka brokers missing in config.");
-    let group_id = conf["kafka"]["group_id"].as_str().expect("kafka group_id missing in config.");
-    let kafka_topic = conf["kafka"]["topic"].as_str().expect("kafka topic missing in config.");
+    let kafka_consumer_thread = thread::spawn(move || {
+        //TODO implement tokio async version
+        let conf = config::get_config(None).expect("Failed to load JSON config.");
+        let brokers = conf["kafka"]["brokers"].as_str().expect("kafka brokers missing in config.");
+        let group_id = conf["kafka"]["group_id"].as_str().expect("kafka group_id missing in config.");
+        let kafka_topic = conf["kafka"]["topic"].as_str().expect("kafka topic missing in config.");
+        let kafka_consumer = consumer::MSConsumer::new(brokers, group_id).unwrap();
+        let _ = kafka_consumer.consume(&[kafka_topic]);
+    });
 
-    let kafka_consumer = consumer::MSConsumer::new(brokers, group_id)?;
-    let _ = kafka_consumer.consume(&[kafka_topic]);
+    let brokers = conf["kafka"]["brokers"].as_str().expect("kafka brokers missing in config.");
+    let kafka_topic = conf["kafka"]["topic"].as_str().expect("kafka topic missing in config.");
 
     let kafka_producer = producer::MSProducer::new(brokers)?;
     let _ = kafka_producer.produce(kafka_topic, "rustkey1", "rustvalue1", 0);
@@ -122,5 +128,6 @@ fn execute() -> Result<(), io::Error> {
     /* ## Clean-up ## */
 
     let _ = webserver_thread.join(); //awaits http server endlessly
+    let _ = kafka_consumer_thread.join();
     Ok(())
 }
