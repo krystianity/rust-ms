@@ -8,7 +8,7 @@ pub mod consumer {
     use self::futures::stream::Stream;
 
     use self::rdkafka::Message;
-    use self::rdkafka::client::{Context};
+    use self::rdkafka::client::{ClientContext};
     use self::rdkafka::consumer::{Consumer, ConsumerContext, CommitMode, Rebalance};
     use self::rdkafka::consumer::stream_consumer::StreamConsumer;
     use self::rdkafka::config::{ClientConfig, RDKafkaLogLevel};
@@ -17,7 +17,7 @@ pub mod consumer {
     //holds custom callbacks for consumer
     struct MSConsumerContext;
 
-    impl Context for MSConsumerContext {}
+    impl ClientContext for MSConsumerContext {}
 
     impl ConsumerContext for MSConsumerContext {
 
