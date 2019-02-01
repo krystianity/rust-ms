@@ -49,7 +49,7 @@ fn execute() -> Result<(), io::Error> {
 
     /* ## Logger ## */
 
-    env_logger::init().expect("Failed to setup logger.");
+    env_logger::init();
 
     /* ## Loading JSON Configuration ## */
 

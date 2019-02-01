@@ -1,7 +1,6 @@
 pub mod mshttp_c {
-
     extern crate reqwest;
-    use self::reqwest::header::{Headers, UserAgent, ContentType};
+    use self::reqwest::header::{HeaderMap, USER_AGENT, CONTENT_TYPE, ACCEPT};
     use std::io;
 
     pub struct HttpClient {
@@ -15,11 +14,11 @@ pub mod mshttp_c {
             Ok(HttpClient{client})
         }
 
-        pub fn construct_headers(&self) -> Headers {
-            let mut headers = Headers::new();
-            headers.set(UserAgent::new("reqwest"));
-            headers.set_raw("accept", "application/json");
-            headers.set(ContentType::json());
+        pub fn construct_headers(&self) -> HeaderMap {
+            let mut headers = HeaderMap::new();
+            headers.insert(USER_AGENT, "reqwest".parse().unwrap());
+            headers.insert(ACCEPT, "application/json".parse().unwrap());
+            headers.insert(CONTENT_TYPE, "application/json".parse().unwrap());
             headers
         }
 

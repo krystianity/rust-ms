@@ -6,14 +6,14 @@ pub mod producer {
     use std::io;
     use self::futures::*;
 
-    use self::rdkafka::client::EmptyContext;
+    use self::rdkafka::client::DefaultClientContext;
     use self::rdkafka::config::ClientConfig;
-    use self::rdkafka::producer::FutureProducer;
+    use self::rdkafka::producer::{FutureProducer, FutureRecord};
     use self::rdkafka::error::KafkaError;
     use self::rdkafka::message::OwnedMessage;
 
     pub struct MSProducer {
-        client: FutureProducer<EmptyContext>
+        client: FutureProducer<DefaultClientContext>
     }
 
     impl MSProducer {
@@ -31,10 +31,18 @@ pub mod producer {
             Ok(MSProducer{client})
         }
 
-        pub fn produce(&self, topic_name: &str, key: &str, value: &str, partition: i64) -> Result<(i32, i64), (KafkaError, OwnedMessage)> {
+        pub fn produce(&self, topic_name: &str, key: &str, value: &str, partition: i32) -> Result<(i32, i64), (KafkaError, OwnedMessage)> {
             debug!("Producing {} to {}/{}.", key, topic_name, partition);
+            let record = FutureRecord{
+                topic: topic_name,
+                partition: Some(partition),
+                payload: Some(value),
+                key: Some(key),
+                timestamp: None,
+                headers: None,
+            };
             self.client
-                .send_copy(topic_name, None, Some(value), Some(key), None, partition)
+                .send(record, 0)
                 .map(move |delivery_status| {
                     debug!("Received delivery status for {} on {}/{}.", key, topic_name, partition);
                     delivery_status
