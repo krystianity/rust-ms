@@ -9,7 +9,7 @@ use rdkafka::message::OwnedMessage;
 use rdkafka::producer::{FutureProducer, FutureRecord};
 
 pub struct MSProducer {
-    client: FutureProducer<DefaultClientContext>
+    client: FutureProducer<DefaultClientContext>,
 }
 
 impl MSProducer {
@@ -25,7 +25,13 @@ impl MSProducer {
         Ok(MSProducer { client })
     }
 
-    pub fn produce(&self, topic_name: &str, key: &str, value: &str, partition: i32) -> Result<(i32, i64), (KafkaError, OwnedMessage)> {
+    pub fn produce(
+        &self,
+        topic_name: &str,
+        key: &str,
+        value: &str,
+        partition: i32,
+    ) -> Result<(i32, i64), (KafkaError, OwnedMessage)> {
         debug!("Producing {} to {}/{}.", key, topic_name, partition);
         let record = FutureRecord {
             topic: topic_name,
@@ -38,7 +44,10 @@ impl MSProducer {
         self.client
             .send(record, 0)
             .map(move |delivery_status| {
-                debug!("Received delivery status for {} on {}/{}.", key, topic_name, partition);
+                debug!(
+                    "Received delivery status for {} on {}/{}.",
+                    key, topic_name, partition
+                );
                 delivery_status
             })
             .wait()

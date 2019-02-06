@@ -1,7 +1,7 @@
-use iron::{AfterMiddleware, BeforeMiddleware, typemap};
 use iron::headers::ContentType;
 use iron::prelude::*;
 use iron::status;
+use iron::{typemap, AfterMiddleware, BeforeMiddleware};
 use log::info;
 use persistent::Read;
 use router::Router;
@@ -14,9 +14,13 @@ struct ResponseTime;
 
 struct ChainJSONParser;
 
-impl typemap::Key for ResponseTime { type Value = u64; }
+impl typemap::Key for ResponseTime {
+    type Value = u64;
+}
 
-impl typemap::Key for ChainJSONParser { type Value = serde_json::value::Value; }
+impl typemap::Key for ChainJSONParser {
+    type Value = serde_json::value::Value;
+}
 
 impl BeforeMiddleware for ResponseTime {
     fn before(&self, req: &mut Request) -> IronResult<()> {
@@ -41,7 +45,7 @@ impl BeforeMiddleware for ChainJSONParser {
                 req.extensions.insert::<ChainJSONParser>(json_body);
             }
             Ok(None) => println!("empty body"),
-            Err(err) => println!("error parsing body: {:?}", err)
+            Err(err) => println!("error parsing body: {:?}", err),
         }
         Ok(())
     }
@@ -52,7 +56,12 @@ fn hello_world(_: &mut Request) -> IronResult<Response> {
 }
 
 fn query_handler(req: &mut Request) -> IronResult<Response> {
-    let query = &req.extensions.get::<Router>().unwrap().find("query").unwrap_or("/");
+    let query = &req
+        .extensions
+        .get::<Router>()
+        .unwrap()
+        .find("query")
+        .unwrap_or("/");
     Ok(Response::with((status::Ok, *query)))
 }
 
@@ -61,18 +70,22 @@ fn body_handler(req: &mut Request) -> IronResult<Response> {
     if let Some(ref value) = json_body {
         println!("Parsed body:\n{:?}", *value);
     }
-    Ok(Response::with((ContentType::json().0, status::Ok, json_result().to_string())))
+    Ok(Response::with((
+        ContentType::json().0,
+        status::Ok,
+        json_result().to_string(),
+    )))
 }
 
 fn json_result() -> serde_json::value::Value {
     let json_value = json!({
-        "name": "John Doe",
-        "age": 43,
-        "phones": [
-            "+44 1234567",
-            "+44 2345678"
-        ]
-        });
+    "name": "John Doe",
+    "age": 43,
+    "phones": [
+        "+44 1234567",
+        "+44 2345678"
+    ]
+    });
 
     json_value
 }

@@ -1,8 +1,8 @@
-use reqwest::header::{HeaderMap, USER_AGENT, CONTENT_TYPE, ACCEPT};
+use reqwest::header::{HeaderMap, ACCEPT, CONTENT_TYPE, USER_AGENT};
 use std::io;
 
 pub struct HttpClient {
-    client: reqwest::Client
+    client: reqwest::Client,
 }
 
 impl HttpClient {

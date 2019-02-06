@@ -5,7 +5,7 @@ use redis::Commands;
 
 pub struct Cache {
     //client: redis::Client,
-    pub con: redis::Connection
+    pub con: redis::Connection,
 }
 
 impl Cache {
@@ -14,7 +14,7 @@ impl Cache {
         let client = redis::Client::open(constr)?;
         let con = client.get_connection()?;
         info!("Redis client connected to {}.", constr);
-        Ok(Cache { /*client,*/ con })
+        Ok(Cache { /*client,*/ con, })
     }
 
     pub fn set(&self, key: &str, val: &str) -> Result<(), redis::RedisError> {

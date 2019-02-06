@@ -4,8 +4,8 @@ use futures::stream::Stream;
 use log::{debug, info, warn};
 use rdkafka::client::ClientContext;
 use rdkafka::config::{ClientConfig, RDKafkaLogLevel};
-use rdkafka::consumer::{CommitMode, Consumer, ConsumerContext, Rebalance};
 use rdkafka::consumer::stream_consumer::StreamConsumer;
+use rdkafka::consumer::{CommitMode, Consumer, ConsumerContext, Rebalance};
 use rdkafka::error::KafkaResult;
 use rdkafka::Message;
 
@@ -23,7 +23,11 @@ impl ConsumerContext for MSConsumerContext {
         debug!("Post rebalance {:?}", rebalance);
     }
 
-    fn commit_callback(&self, _result: KafkaResult<()>, _offsets: *mut rdkafka_sys::RDKafkaTopicPartitionList) {
+    fn commit_callback(
+        &self,
+        _result: KafkaResult<()>,
+        _offsets: *mut rdkafka_sys::RDKafkaTopicPartitionList,
+    ) {
         debug!("Committing offsets");
     }
 }
@@ -32,7 +36,7 @@ impl ConsumerContext for MSConsumerContext {
 type CustomConsumer = StreamConsumer<MSConsumerContext>;
 
 pub struct MSConsumer {
-    client: CustomConsumer
+    client: CustomConsumer,
 }
 
 impl MSConsumer {
@@ -80,11 +84,19 @@ impl MSConsumer {
                         }
                     };
 
-                    info!("key: '{:?}', payload: '{}', topic: {}, partition: {}, offset: {}",
-                          message.key(), payload, message.topic(), message.partition(), message.offset());
+                    info!(
+                        "key: '{:?}', payload: '{}', topic: {}, partition: {}, offset: {}",
+                        message.key(),
+                        payload,
+                        message.topic(),
+                        message.partition(),
+                        message.offset()
+                    );
 
                     //TODO callback here?
-                    self.client.commit_message(&message, CommitMode::Async).unwrap();
+                    self.client
+                        .commit_message(&message, CommitMode::Async)
+                        .unwrap();
                 }
             }
         }
