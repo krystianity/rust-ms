@@ -1,7 +1,8 @@
 pub mod cache {
-
-    use redis::Commands;
     use std::io::{Error, ErrorKind};
+
+    use log::info;
+    use redis::Commands;
 
     pub struct Cache {
         //client: redis::Client,

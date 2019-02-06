@@ -1,14 +1,14 @@
 pub mod consumer {
-    
     use std::io;
-    use futures::stream::Stream;
 
-    use rdkafka::Message;
-    use rdkafka::client::{ClientContext};
-    use rdkafka::consumer::{Consumer, ConsumerContext, CommitMode, Rebalance};
-    use rdkafka::consumer::stream_consumer::StreamConsumer;
+    use futures::stream::Stream;
+    use log::{debug, info, warn};
+    use rdkafka::client::ClientContext;
     use rdkafka::config::{ClientConfig, RDKafkaLogLevel};
+    use rdkafka::consumer::{CommitMode, Consumer, ConsumerContext, Rebalance};
+    use rdkafka::consumer::stream_consumer::StreamConsumer;
     use rdkafka::error::KafkaResult;
+    use rdkafka::Message;
 
     //holds custom callbacks for consumer
     struct MSConsumerContext;

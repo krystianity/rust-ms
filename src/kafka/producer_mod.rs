@@ -1,13 +1,13 @@
 pub mod producer {
-
     use std::io;
-    use futures::*;
 
+    use futures::*;
+    use log::{debug, info};
     use rdkafka::client::DefaultClientContext;
     use rdkafka::config::ClientConfig;
-    use rdkafka::producer::{FutureProducer, FutureRecord};
     use rdkafka::error::KafkaError;
     use rdkafka::message::OwnedMessage;
+    use rdkafka::producer::{FutureProducer, FutureRecord};
 
     pub struct MSProducer {
         client: FutureProducer<DefaultClientContext>

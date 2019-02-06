@@ -1,7 +1,7 @@
 pub mod consumer_mod;
 pub mod producer_mod;
 pub mod kafka {
-
+    use log::info;
     use rdkafka::util::get_rdkafka_version;
 
     pub fn log_version_info() {
