@@ -26,7 +26,7 @@ pub mod config {
     pub fn get_config(filename: Option<&'static str>) -> Option<Value> {
         let content: String = super::read_file(
             filename.unwrap_or("./config/default.json"))
-            .unwrap_or(String::from("{}"));
+            .unwrap_or_else(|| String::from("{}"));
         super::parse_json(content)
     }
 }

@@ -18,12 +18,12 @@ impl Cache {
     }
 
     pub fn set(&self, key: &str, val: &str) -> Result<(), redis::RedisError> {
-        let _: () = self.con.set(key, val)?;
+        self.con.set(key, val)?;
         Ok(())
     }
 
     pub fn del(&self, key: &str) -> Result<(), redis::RedisError> {
-        let _: () = self.con.del(key)?;
+        self.con.del(key)?;
         Ok(())
     }
 }

@@ -28,7 +28,7 @@ impl BeforeMiddleware for ResponseTime {
 impl AfterMiddleware for ResponseTime {
     fn after(&self, req: &mut Request, res: Response) -> IronResult<Response> {
         let delta = precise_time_ns() - *req.extensions.get::<ResponseTime>().unwrap();
-        println!("Request took: {} ms", (delta as f64) / 1000000.0);
+        println!("Request took: {} ms", (delta as f64) / 1_000_000.0);
         Ok(res)
     }
 }
@@ -39,7 +39,6 @@ impl BeforeMiddleware for ChainJSONParser {
         match body {
             Ok(Some(json_body)) => {
                 req.extensions.insert::<ChainJSONParser>(json_body);
-                ()
             }
             Ok(None) => println!("empty body"),
             Err(err) => println!("error parsing body: {:?}", err)
@@ -53,15 +52,14 @@ fn hello_world(_: &mut Request) -> IronResult<Response> {
 }
 
 fn query_handler(req: &mut Request) -> IronResult<Response> {
-    let ref query = req.extensions.get::<Router>().unwrap().find("query").unwrap_or("/");
+    let query = &req.extensions.get::<Router>().unwrap().find("query").unwrap_or("/");
     Ok(Response::with((status::Ok, *query)))
 }
 
 fn body_handler(req: &mut Request) -> IronResult<Response> {
     let json_body = req.extensions.get::<ChainJSONParser>();
-    match json_body {
-        Some(ref value) => println!("Parsed body:\n{:?}", *value),
-        None => ()
+    if let Some(ref value) = json_body {
+        println!("Parsed body:\n{:?}", *value);
     }
     Ok(Response::with((ContentType::json().0, status::Ok, json_result().to_string())))
 }
