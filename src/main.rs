@@ -2,7 +2,6 @@
 extern crate log;
 #[macro_use]
 extern crate serde_json;
-extern crate env_logger;
 
 use std::io;
 use std::thread;
@@ -20,8 +19,8 @@ use cache_mod::cache as cache;
 use kafka::consumer_mod::consumer as consumer;
 use kafka::producer_mod::producer as producer;
 
-use cache_mod::cache::redis;
-use cache_mod::cache::redis::Commands; //import traits for con.get and con.set
+use redis;
+use redis::Commands; //import traits for con.get and con.set
 
 /*
     rust for Node.js developers:

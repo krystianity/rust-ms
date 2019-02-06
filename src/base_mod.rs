@@ -1,9 +1,8 @@
 pub mod msbase {
 
-    pub extern crate serde_json;
     use std::fs::File;
     use std::io::prelude::*;
-    pub use self::serde_json::{Value};
+    use serde_json::{Value};
 
     pub fn read_file(filename: &'static str) -> Option<String> {
         let mut file_handle = File::open(filename).expect("file not found");
@@ -24,9 +23,7 @@ pub mod msbase {
     }
 
     pub mod config {
-
-        extern crate serde_json;
-        use super::serde_json::{Value};
+        use serde_json::{Value};
 
         pub fn get_config(filename: Option<&'static str>) -> Option<Value> {
             let content: String = super::read_file(

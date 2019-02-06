@@ -1,7 +1,6 @@
 pub mod cache {
 
-    pub extern crate redis;
-    pub use self::redis::Commands;
+    use redis::Commands;
     use std::io::{Error, ErrorKind};
 
     pub struct Cache {

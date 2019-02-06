@@ -1,6 +1,5 @@
 pub mod mshttp_c {
-    extern crate reqwest;
-    use self::reqwest::header::{HeaderMap, USER_AGENT, CONTENT_TYPE, ACCEPT};
+    use reqwest::header::{HeaderMap, USER_AGENT, CONTENT_TYPE, ACCEPT};
     use std::io;
 
     pub struct HttpClient {

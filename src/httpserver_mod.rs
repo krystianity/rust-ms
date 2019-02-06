@@ -1,19 +1,12 @@
 pub mod mshttp_s {
 
-    extern crate iron;
-    extern crate time;
-    extern crate router;
-    extern crate bodyparser;
-    extern crate persistent;
-    extern crate serde_json;
-
-    use self::iron::prelude::*;
-    use self::iron::{BeforeMiddleware, AfterMiddleware, typemap};
-    use self::iron::status;
-    use self::iron::headers::ContentType;
-    use self::time::precise_time_ns;
-    use self::router::Router;
-    use self::persistent::Read;
+    use iron::prelude::*;
+    use iron::{BeforeMiddleware, AfterMiddleware, typemap};
+    use iron::status;
+    use iron::headers::ContentType;
+    use time::precise_time_ns;
+    use router::Router;
+    use persistent::Read;
 
     const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
     struct ResponseTime;

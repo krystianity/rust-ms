@@ -1,16 +1,13 @@
 pub mod producer {
 
-    extern crate futures;
-    extern crate rdkafka;
-
     use std::io;
-    use self::futures::*;
+    use futures::*;
 
-    use self::rdkafka::client::DefaultClientContext;
-    use self::rdkafka::config::ClientConfig;
-    use self::rdkafka::producer::{FutureProducer, FutureRecord};
-    use self::rdkafka::error::KafkaError;
-    use self::rdkafka::message::OwnedMessage;
+    use rdkafka::client::DefaultClientContext;
+    use rdkafka::config::ClientConfig;
+    use rdkafka::producer::{FutureProducer, FutureRecord};
+    use rdkafka::error::KafkaError;
+    use rdkafka::message::OwnedMessage;
 
     pub struct MSProducer {
         client: FutureProducer<DefaultClientContext>
