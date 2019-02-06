@@ -3,35 +3,34 @@ use log::info;
 use std::io;
 use std::thread;
 
-mod base_mod;
-mod httpserver_mod;
-mod cache_mod;
-mod httpclient_mod;
+mod msbase;
+mod httpserver;
+mod cache;
+mod httpclient;
 mod kafka;
 
-use base_mod::msbase::config as config;
-use httpserver_mod::mshttp_s as http_s;
-use httpclient_mod::mshttp_c as http_c;
-use cache_mod::cache as cache;
-use kafka::consumer_mod::consumer as consumer;
-use kafka::producer_mod::producer as producer;
+use msbase::config;
+use httpserver as http_s;
+use httpclient as http_c;
+use kafka::consumer;
+use kafka::producer;
 
 use redis;
 use redis::Commands; //import traits for con.get and con.set
 
 /*
-    rust for Node.js developers:
-    - Result<val,err> -> Ok(), Err() => Javascript Callback
-    - Option<val> -> Some(), None, unwrap, unwrap_or => Java Optional
-    - dont end with ; for returns, as this will cause the fn to return ()
-    - macros need to be placed in the main rs file once
-    - a module is imported via "mod name"
-    - the order of use:: and mod doesnt care
-    - if a module uses crates they have to be accessed via use self::crate
-    - try! unwraps a Result<> but returns early, so that the fn has to return a Result<> as well
-    - traits === interfaces
-    - struct + impl === class
-    - second let definition overwrites first without error or warning
+rust for Node.js developers:
+- Result<val,err> -> Ok(), Err() => Javascript Callback
+- Option<val> -> Some(), None, unwrap, unwrap_or => Java Optional
+- dont end with ; for returns, as this will cause the fn to return ()
+- macros need to be placed in the main rs file once
+- a module is imported via "mod name"
+- the order of use:: and mod doesnt care
+- if a module uses crates they have to be accessed via use self::crate
+- try! unwraps a Result<> but returns early, so that the fn has to return a Result<> as well
+- traits === interfaces
+- struct + impl === class
+- second let definition overwrites first without error or warning
 */
 
 fn main() {
@@ -78,7 +77,7 @@ fn execute() -> Result<(), io::Error> {
 
     /* ## Kafka Consumer/Producer ## */
 
-    kafka::kafka::log_version_info();
+    kafka::log_version_info();
 
     let kafka_consumer_thread = thread::spawn(move || {
         //TODO implement tokio async version
