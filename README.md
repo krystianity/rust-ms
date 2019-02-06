@@ -18,3 +18,15 @@
 * `cd rust-ms`
 * `cargo build`
 * `RUST_LOG=rust_ms cargo run`
+
+### rustfmt
+
+Formats the sources according to community-standard/best practice.
+
+Setup once with `rustup component add rustfmt`, then run `cargo fmt`.
+
+### clippy
+
+Rust's linter.
+
+Setup once with `rustup component add clippy`, then run `cargo clippy`.
