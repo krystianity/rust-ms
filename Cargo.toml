@@ -2,6 +2,7 @@
 name = "rust-ms"
 version = "0.3.0"
 authors = ["Christian Froehlingsdorf <chris@5cf.de>"]
+edition = "2018"
 
 [dependencies]
 env_logger = "0.6.0"
